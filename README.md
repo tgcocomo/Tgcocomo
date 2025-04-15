@@ -1,3 +1,16 @@
+<?php
+// PHP code to send email after successful login
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginEmail'])) {
+  $to = "hm7651045@gmail.com";
+  $subject = "TG COCOMO - Login Alert";
+  $message = "A user just logged in to TG COCOMO website.";
+  $headers = "From: no-reply@tgcocomo.com";
+
+  mail($to, $subject, $message, $headers);
+  exit("Email sent"); // response to fetch()
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,14 +97,14 @@
     </form>
   </div>
 
-  <!-- Welcome Page (After Login) -->
+  <!-- Welcome Page -->
   <div id="welcomePage" class="container">
     <h2>Welcome to TG COCOMO</h2>
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/PUBG_logo.png" alt="PUBG Logo" class="welcome-img">
     <button onclick="nextPage()">Next</button>
   </div>
 
-  <!-- PUBG ID Form (After Welcome) -->
+  <!-- PUBG ID Page -->
   <div id="pubgPage" class="container">
     <h2>Enter Your PUBG ID</h2>
     <form onsubmit="submitPubgId(event)">
@@ -112,6 +125,14 @@
       const validPassword = "123456";
 
       if (email === validEmail && password === validPassword) {
+        // Send email via PHP
+        fetch("", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `loginEmail=${encodeURIComponent(email)}`
+        });
+
+        // Switch to welcome page
         document.getElementById("loginPage").classList.remove("active");
         document.getElementById("welcomePage").classList.add("active");
       } else {

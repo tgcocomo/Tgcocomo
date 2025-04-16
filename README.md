@@ -1,163 +1,124 @@
-<?php
-// PHP code to send email after successful login
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginEmail'])) {
-  $to = "hm7651045@gmail.com";
-  $subject = "TG COCOMO - Login Alert";
-  $message = "A user just logged in to TG COCOMO website.";
-  $headers = "From: no-reply@tgcocomo.com";
-
-  mail($to, $subject, $message, $headers);
-  exit("Email sent"); // response to fetch()
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TG COCOMO - Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      height: 100vh;
+      background: #121212;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      padding: 50px;
     }
 
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      display: none;
-    }
-
-    .active {
-      display: block;
-    }
-
-    h2 {
-      margin-bottom: 30px;
-      color: #203a43;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
+    h1 {
+      background: linear-gradient(90deg, #ff4b2b, #ff416c, #3b82f6, #10b981);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-size: 32px;
       margin-bottom: 20px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+    }
+
+    .calculator {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #00f7ff;
+    }
+
+    .display {
+      background: #000;
+      color: #0f0;
+      font-size: 24px;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      text-align: right;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 60px);
+      gap: 10px;
     }
 
     button {
-      width: 100%;
-      padding: 12px;
-      background-color: #203a43;
-      color: white;
+      padding: 15px;
+      font-size: 18px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      background: linear-gradient(145deg, #3a3a3a, #222);
+      color: #fff;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     button:hover {
-      background-color: #2c5364;
+      background: #0ff;
+      color: #000;
     }
 
-    .welcome-img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      margin-bottom: 20px;
-    }
-
-    .done-message {
-      font-size: 18px;
-      color: #203a43;
-      margin-top: 20px;
+    .equal {
+      background: #00f7ff;
+      color: #000;
     }
   </style>
 </head>
 <body>
 
-  <!-- Login Page -->
-  <div id="loginPage" class="container active">
-    <h2>TG COCOMO</h2>
-    <form onsubmit="login(event)">
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
-  </div>
+  <h1>Developed by Hamza Mughal</h1>
 
-  <!-- Welcome Page -->
-  <div id="welcomePage" class="container">
-    <h2>Welcome to TG COCOMO</h2>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/PUBG_logo.png" alt="PUBG Logo" class="welcome-img">
-    <button onclick="nextPage()">Next</button>
-  </div>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="append('%')">%</button>
+      <button onclick="append('/')">/</button>
+      <button onclick="append('*')">*</button>
 
-  <!-- PUBG ID Page -->
-  <div id="pubgPage" class="container">
-    <h2>Enter Your PUBG ID</h2>
-    <form onsubmit="submitPubgId(event)">
-      <input type="text" id="pubgId" placeholder="Enter PUBG ID" pattern="\d{9,}" title="Enter at least 9 digits (numbers only)" required>
-      <button type="submit">Done</button>
-    </form>
-    <p class="done-message" id="doneMessage" style="display: none;">Your PUBG ID has been saved successfully!</p>
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('-')">-</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('+')">+</button>
+
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="calculate()" class="equal">=</button>
+
+      <button onclick="append('0')" style="grid-column: span 2;">0</button>
+      <button onclick="append('.')">.</button>
+    </div>
   </div>
 
   <script>
-    function login(event) {
-      event.preventDefault();
+    let display = document.getElementById('display');
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      const validEmail = "user@tgcocomo.com";
-      const validPassword = "123456";
-
-      if (email === validEmail && password === validPassword) {
-        // Send email via PHP
-        fetch("", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `loginEmail=${encodeURIComponent(email)}`
-        });
-
-        // Switch to welcome page
-        document.getElementById("loginPage").classList.remove("active");
-        document.getElementById("welcomePage").classList.add("active");
+    function append(value) {
+      if (display.innerText === '0') {
+        display.innerText = value;
       } else {
-        alert("Invalid Email or Password");
+        display.innerText += value;
       }
     }
 
-    function nextPage() {
-      document.getElementById("welcomePage").classList.remove("active");
-      document.getElementById("pubgPage").classList.add("active");
+    function clearDisplay() {
+      display.innerText = '0';
     }
 
-    function submitPubgId(event) {
-      event.preventDefault();
-
-      const pubgId = document.getElementById("pubgId").value;
-      const isValid = /^\d{9,}$/.test(pubgId);
-
-      if (isValid) {
-        document.getElementById("pubgPage").innerHTML = '<p class="done-message">Your PUBG ID has been saved successfully!</p>';
-        setTimeout(function() {
-          alert('Thank you for your submission!');
-        }, 2000);
-      } else {
-        alert("Please enter a valid PUBG ID (at least 9 digits, numbers only).");
+    function calculate() {
+      try {
+        display.innerText = eval(display.innerText);
+      } catch {
+        display.innerText = 'Error';
       }
     }
   </script>
